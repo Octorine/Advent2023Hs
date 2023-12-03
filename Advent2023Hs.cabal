@@ -29,7 +29,8 @@ executable Advent2023Hs
     main-is:          Main.hs
     other-modules:    Paths_Advent2023Hs,
                       Day01,
-                      Day02
+                      Day02,
+                      Day03
     autogen-modules:  Paths_Advent2023Hs
     data-dir:         data
     data-files:       data/*.txt
