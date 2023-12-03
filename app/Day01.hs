@@ -8,8 +8,8 @@ datafile filename = (getDataFileName $ "data/" ++ filename) >>= readFile
 Ignoring the letters, take the first and last digit from each line,
 make them into a two-digit number, and add them all up.
 
->>> d01p1
-"day01-ex.txt" "142"
+>>> d01p1"day01-ex.txt"
+"142"
 -}
 d01p1 filename = do
   input <- datafile filename
@@ -21,8 +21,8 @@ d01p1 filename = do
    and the last spelled-out digit, then make two-digit numbers and add
    them up like in step one.
 
->>> d01p2 "day01-ex.txt"
- "281"
+>>> d01p2 "day01p2-ex.txt"
+"281"
 -}
 d01p2 filename = do
   input <- datafile filename
