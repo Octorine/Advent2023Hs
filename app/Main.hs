@@ -3,6 +3,7 @@ import Day01 (day01)
 import Day02 (day02)
 import Day03 (day03)
 import Day04 (day04)
+import Day05 (day05)
 import Game.Advent
 
 main :: IO ()
@@ -12,4 +13,5 @@ main = do
   runDay day02
   runDay day03
   runDay day04
+  runDay day05
 
