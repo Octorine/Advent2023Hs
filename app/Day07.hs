@@ -5,7 +5,7 @@ import Data.List
 import Data.Char
 import Data.Ord
 
-datafile filename = (getDataFileName $ "data/" ++  filename) >>= readFile
+datafile filename = (getDataFileName $  filename) >>= readFile
 
 {- | Part 1.  Short description of the problem.
 >>> d07p1 "day07-ex.txt"

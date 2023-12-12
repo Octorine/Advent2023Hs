@@ -2,7 +2,7 @@ module Day01 (day01) where
 import Game.Advent
 import Paths_Advent2023Hs (getDataFileName)
 import Data.Char (isDigit)
-datafile filename = (getDataFileName $ "data/" ++ filename) >>= readFile 
+datafile filename = (getDataFileName $ filename) >>= readFile 
 
 {- | Part 1.  Input is a list of lines containing letters and numbers.
 Ignoring the letters, take the first and last digit from each line,

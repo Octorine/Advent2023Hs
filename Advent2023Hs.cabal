@@ -24,6 +24,8 @@ version:            0.1.0.0
 -- copyright:
 -- category:
 extra-source-files: CHANGELOG.md
+data-dir:           data
+data-files:         *.txt
 
 executable Advent2023Hs
     main-is:          Main.hs
@@ -36,8 +38,6 @@ executable Advent2023Hs
                       Day06,
                       Day07
     autogen-modules:  Paths_Advent2023Hs
-    data-dir:         data
-    data-files:       data/*.txt
     -- Modules included in this executable, other than Main.
     -- other-modules:
 

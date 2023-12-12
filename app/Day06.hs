@@ -2,7 +2,7 @@ module Day06 (day06) where
 import Game.Advent
 import Paths_Advent2023Hs (getDataFileName)
 
-datafile filename = (getDataFileName $ "data/" ++  filename) >>= readFile
+datafile filename = (getDataFileName $   filename) >>= readFile
 
 {- | Part 1.  Short description of the problem.
 >>> d06p1 "day06-ex.txt"

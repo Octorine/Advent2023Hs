@@ -5,7 +5,7 @@ import Paths_Advent2023Hs (getDataFileName)
 import qualified Data.Map  as M
 import Data.Maybe (fromJust)
 import Data.Char (isDigit)
-datafile filename = (getDataFileName $ "data/" ++  filename) >>= readFile
+datafile filename = (getDataFileName $  filename) >>= readFile
 
 {- | Part 1.  Input consists of a list of numbers with a | in the middle.  For each line, find all the numbers on the left that also appear on the right and award 2^(number minus one) points for that line.  Add up the lines.
 >>> d04p1 "day04-ex.txt"

@@ -5,7 +5,7 @@ import Paths_Advent2023Hs (getDataFileName)
 import Text.Parsec
 import Text.Parsec.Char
 
-datafile filename = (getDataFileName $ "data/" ++ filename) >>= readFile 
+datafile filename = (getDataFileName $ filename) >>= readFile 
 
 {- | Part 1.  Short description of the problem.
 >>> d02p1 "day02-ex.txt"

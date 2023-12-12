@@ -3,7 +3,7 @@ import Game.Advent
 import Paths_Advent2023Hs (getDataFileName)
 import Data.Char (isDigit)
 
-datafile filename = (getDataFileName $ "data/" ++  filename) >>= readFile
+datafile filename = (getDataFileName $  filename) >>= readFile
 
 {- | Part 1.  Input is a 2d array of characters containing some numbers, some symbols and some . characters.  Add up all the numbers that are adjacent to at least one symbol (not counting .).
 >>> d03p1 "day03-ex.txt"

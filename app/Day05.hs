@@ -8,7 +8,7 @@ import Text.Parsec.Combinator
 import Text.Parsec.Char
 import Data.Either
 import Data.List
-datafile filename = (getDataFileName $ "data/" ++ filename) >>= readFile
+datafile filename = (getDataFileName $ filename) >>= readFile
 
 -- | Part 1.  Short description of the problem.
 -- >>> d05p1 "day05-ex.txt"
