@@ -33,7 +33,8 @@ executable Advent2023Hs
                       Day03,
                       Day04,
                       Day05,
-                      Day06
+                      Day06,
+                      Day07
     autogen-modules:  Paths_Advent2023Hs
     data-dir:         data
     data-files:       data/*.txt
