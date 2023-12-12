@@ -43,8 +43,8 @@ executable Advent2023Hs
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    build-depends:    base ^>=4.19.0.0,
-                      advent-runner,
+    build-depends:    base ^>=4.17.2.0,
+                      advent-runner == 0.1.1.0,
                       containers ^>=0.6.8,
                       parsec ^>=3.1.17.0,
                       text ^>=2.1 
