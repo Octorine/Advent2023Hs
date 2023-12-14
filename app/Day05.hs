@@ -10,7 +10,11 @@ import Text.Parsec.Combinator
 
 datafile filename = (getDataFileName $ filename) >>= readFile
 
--- | Part 1.  Short description of the problem.
+-- | Part 1.  The first line of the input is a list of numbers, the
+-- "seeds".  After that is a list of transformations, which are applied
+-- in-order to each seed.  Result is the miniumum of all the seeds
+-- after all the transformations have been applied.
+
 -- >>> d05p1 "day05-ex.txt"
 -- "35"
 d05p1 filename = do
@@ -19,7 +23,11 @@ d05p1 filename = do
   let mappedSeeds = foldl' (\ss m -> map (\s -> applyMap m s) ss) seeds maps
   return . show $ minimum mappedSeeds
 
--- | Part 2.  Short description of the problem.
+-- | Part 2.  The filters are the same as before, but this time, each
+-- pair of numbers in the seeds list is interpereted as a range.  As
+-- before, the result is the smallest value after all the
+-- transformations have been applied.
+
 -- >>> d05p2 "day05-ex.txt"
 -- "46"
 d05p2 filename = do

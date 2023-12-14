@@ -5,14 +5,23 @@ import Paths_Advent2023Hs (getDataFileName)
 
 datafile filename = (getDataFileName $ filename) >>= readFile
 
--- | Part 1.  Short description of the problem.
+-- | Part 1.  The input describes a series of races.  The first line
+-- describes the time limit for each race, an dthe second line lists
+-- the best distance.  The challenge is to try running each race at
+-- different speeds, with the tradeoff that faster speeds mean reduced
+-- time limit.  Find the number of ways to win each race, then
+-- multiply all the results together.
+
 -- >>> d06p1 "day06-ex.txt"
 -- "288"
 d06p1 filename = do
   input <- datafile filename
   return . show . product . map wins $ parseInput input
 
--- | Part 2.  Short description of the problem.
+-- | Part 2.  Like part one, but the input only describes one race.
+-- The numbers in the time and distance lists need to be concatenated
+-- together
+
 -- >>> d06p2 "day06-ex.txt"
 -- "71503"
 d06p2 filename = do

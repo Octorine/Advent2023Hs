@@ -8,14 +8,23 @@ import Paths_Advent2023Hs (getDataFileName)
 
 datafile filename = (getDataFileName $ filename) >>= readFile
 
--- | Part 1.  Short description of the problem.
+-- | Part 1.  The input consists of hands for a poker variant, but
+-- without suits.  Each hand comes with a bid.  Rank the hands by
+-- strength, then multiply heach hand's rank by it's bid, and then add
+-- them up.
+
 -- >>> d07p1 "day07-ex.txt"
 -- "6440"
 d07p1 filename = do
   input <- datafile filename
   return . show . winnings . parseInput $ input
 
--- | Part 2.  Short description of the problem.
+-- | Part 2.  In the first part, the "J" card represented a Jack.  In
+-- this part, the J is a joker.  Joker can be used as any other card
+-- for computing pairs, tthree-of-a-kind, etc., but is the weakest
+-- card when looking at high cards.  Compute the result as before,
+-- multiplying rank by bid.
+
 -- >>> d07p2 "day07-ex.txt"
 -- "5905"
 d07p2 filename = do
