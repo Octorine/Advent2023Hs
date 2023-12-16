@@ -36,7 +36,8 @@ executable Advent2023Hs
                       Day04,
                       Day05,
                       Day06,
-                      Day07
+                      Day07,
+                      Day08
     autogen-modules:  Paths_Advent2023Hs
     -- Modules included in this executable, other than Main.
     -- other-modules:
