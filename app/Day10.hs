@@ -2,6 +2,7 @@ module Day10 (day10) where
 import Game.Advent
 import Paths_Advent2023Hs (getDataFileName)
 import qualified Data.Map as M
+import qualified Data.Set as S
 import Data.Maybe
 
 datafile filename = getDataFileName filename >>= readFile
@@ -16,8 +17,8 @@ d10p1 filename = do
   let start = gridStart grid
   return  . show $ length (getPath grid) `div` 2
 
-getPath :: Grid -> [Coords]
-getPath g =
+getPath :: Grid -> S.Set Coords
+getPath g =S.fromList $ 
   go g
      (gridStart g)
      (head (outPaths (gridStart g) (gridGraph g)))
@@ -57,11 +58,11 @@ makeGrid :: [String] -> Grid
 makeGrid rows = go (Coords 0 (length rows - 1)) Nothing rows M.empty
   where go c mStart [] m = Grid{ gridStart = fromJust mStart,
                                  gridGraph = addStart (fromJust mStart) m}
-        go c mStart ([]: rows) m = go (lf c) mStart rows m
-        go c mStart (('S' : xs) : rows) m = go (right c) (Just c) (xs : rows) m
-        go c mStart (('.' : xs) : rows) m = go (right c) mStart (xs : rows) m
+        go c mStart ([]: rows) m = c `seq` go (lf c) mStart rows m
+        go c mStart (('S' : xs) : rows) m = c `seq`  go (right c) (Just c) (xs : rows) m
+        go c mStart (('.' : xs) : rows) m =  c `seq` go (right c) mStart (xs : rows) m
         go c mStart ((x : xs) : rows) m =
-          go (right c)
+          c `seq`  go (right c)
              mStart
              (xs : rows)
              (M.insert c (Hall (getOuts  c x)) m)
@@ -120,7 +121,7 @@ data CountingState  = CS {
   csCoords :: !Coords,
   csInner :: !Bool,
   csHoriz :: !(Maybe Char),
-  csRows :: [String],
+  csRows :: ![String],
   csAcc :: !Int
   } deriving (Show)
 
@@ -145,7 +146,7 @@ csNotHoriz (CS coords inner horiz rows acc) = CS coords inner Nothing rows acc
 countInnerSpaces txt = go (CS (Coords 0 0) False Nothing rows 0)
   where rows = lines txt
         go cs | null . csRows $ cs = csAcc cs
-        go cs | null . head . csRows $ cs = go (csLf cs)
+        go cs | null . head . csRows $ cs = cs `seq` go (csLf cs)
         go cs = case head (head (csRows cs)) of
           '|' -> go . csRight . csFlipInner $ cs
           '.' -> go . csRight . (if csInner cs then csBump else id) $ cs
@@ -194,7 +195,7 @@ removeJunk txt = pathString
         g = makeGrid rows
         cg = makeCharMap rows
         path = getPath g
-        isOnPath (Coords x y) b = elem (Coords x (height - y - 1)) path
+        isOnPath (Coords x y) b = S.member (Coords x (height - y - 1)) path
         pathString  = unmap width height
           . M.filterWithKey isOnPath $ cg
 
