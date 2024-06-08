@@ -24,4 +24,4 @@ main = do
   runDay day07
   runDay day08
   runDay day09
-  runDay day10
+  runDay day10 

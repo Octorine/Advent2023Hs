@@ -2,8 +2,8 @@ module Day08 (day08) where
 
 import Data.List
 import qualified Data.Map as M
-import qualified Data.Set as S
 import Data.Maybe
+import qualified Data.Set as S
 import Game.Advent
 import Paths_Advent2023Hs (getDataFileName)
 import Text.Parsec
@@ -85,23 +85,25 @@ measure dict directions start end = go start (cycle directions) 0
         )
 
 tryMeasure :: M.Map String (String, String) -> String -> String -> String -> Maybe Integer
-tryMeasure dict directions start end = go start (cycle directions) 0 directions S.empty
+tryMeasure dict directions start end = go start (cycle directions) 0 (length directions) S.empty
   where
-    go node dir acc originalDir trail =
+    go node dir acc dirLength trail =
       acc `seq`
         ( if node == end
             then (Just acc)
             else
-              if S.member (node, take (length originalDir) dir) trail
+              if S.member (node, take dirLength dir) trail
                 then Nothing
                 else
                   let Just (left, right) = M.lookup node dict
-                   in go
-                        (if head dir == 'L' then left else right)
-                        (tail dir)
-                        (acc + 1)
-                        originalDir
-                        (S.insert (node, take (length originalDir) dir) trail)
+                      newSet = S.insert (node, take dirLength dir) trail
+                   in newSet `seq`
+                        go
+                          (if head dir == 'L' then left else right)
+                          (tail dir)
+                          (acc + 1)
+                          dirLength
+                          newSet
         )
 
 measurePar :: M.Map String (String, String) -> String -> [String] -> Int
@@ -117,8 +119,8 @@ measurePar dict directions starts = go starts (cycle directions) 0
                     map (\n -> selector . fromJust $ M.lookup n dict) nodes
                in go nexts (tail dir) (1 + acc)
             )
+
 getAllPaths dict dir starts ends = do
   s <- name <$> starts
   e <- name <$> ends
   return (s, e, tryMeasure dict dir s e)
-
