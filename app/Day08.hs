@@ -69,7 +69,7 @@ parseNode = do
   char ')'
   return $ Node {name = name, left = left, right = right}
 
-measure :: M.Map String (String, String) -> String -> String -> String -> Int
+measure :: M.Map String (String, String) -> String -> String -> String -> Integer
 measure dict directions start end = go start (cycle directions) 0
   where
     go node dir acc =
