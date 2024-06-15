@@ -6,6 +6,6 @@ let pkgs = import <nixpkgs>  {};
         root = ./.;
         modifier = (self: 
                         pkgs.haskell.lib.addBuildDepends 
-                            self [pkgs.cabal-install]);
+                            self [pkgs.cabal-install pkgs.haskellPackages.haskell-language-server]);
     };
 in Advent2023Hs
