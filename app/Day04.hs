@@ -3,6 +3,7 @@
 module Day04 (day04) where
 
 import Data.Char (isDigit)
+import Data.List (partition)
 import qualified Data.Map as M
 import Data.Maybe (fromJust)
 import Game.Advent
@@ -49,12 +50,13 @@ d04p2 filename = do
                         ]
                     )
               )
-         in if first >= last || null newRs
-              then total + mult
-              else
-                go
-                  newRs
-                  (total + mult)
+         in total `seq`
+              if first >= last || null newRs
+                then total + mult
+                else
+                  go
+                    newRs
+                    (total + mult)
 
   return . show $ result
 
@@ -68,8 +70,8 @@ day04 =
 
 data Record = Record
   { name :: !Int,
-    left :: [Integer],
-    right :: [Integer]
+    left :: ![Int],
+    right :: ![Int]
   }
   deriving (Show)
 
@@ -82,7 +84,7 @@ readRecord l =
       right = map read . tail . dropWhile (/= "|") $ numbers
    in Record {name, left, right}
 
-points :: Record -> Integer
+points :: Record -> Int
 points (Record {name, left, right}) =
   let intersection = filter (member right) left
    in if null intersection
