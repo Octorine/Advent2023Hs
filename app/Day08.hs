@@ -2,8 +2,8 @@ module Day08 (day08) where
 
 import Data.List
 import qualified Data.Map as M
-import qualified Data.Set as S
 import Data.Maybe
+import qualified Data.Set as S
 import Game.Advent
 import Paths_Advent2023Hs (getDataFileName)
 import Text.Parsec
@@ -31,9 +31,9 @@ d08p2 filename = do
   input <- datafile filename
   let Right (directions, nodes) = runParser parseInput () "input" input
   let dict = M.fromList . map (\n -> (name n, (left n, right n))) $ nodes
-  let starts = filter ((== 'A') . last . name) $ nodes
+  let starts = filter ((== 'A') . last . name) nodes
   -- return . show $ measurePar dict directions ( name <$> starts)
-  let ends = filter ((== 'Z') . last . name) $ nodes
+  let ends = filter ((== 'Z') . last . name) nodes
   let paths = getAllPaths dict directions starts ends
   return . show . foldl' lcm 1 . mapMaybe (\(_, _, n) -> n) $ paths
 
@@ -84,15 +84,15 @@ measure dict directions start end = go start (cycle directions) 0
                     (acc + 1)
         )
 
-tryMeasure :: M.Map String (String, String) -> String -> String -> String -> Maybe Integer
-tryMeasure dict directions start end = go start (cycle directions) 0 directions S.empty
+tryMeasure :: M.Map String (String, String) -> String -> String -> String -> Maybe Int
+tryMeasure dict directions start end = go start (cycle directions) 0 (length directions) S.empty
   where
-    go node dir acc originalDir trail =
+    go node dir acc dirLength trail =
       acc `seq`
         ( if node == end
-            then (Just acc)
+            then Just acc
             else
-              if S.member (node, take (length originalDir) dir) trail
+              if S.member (node, take dirLength dir) trail
                 then Nothing
                 else
                   let Just (left, right) = M.lookup node dict
@@ -100,25 +100,25 @@ tryMeasure dict directions start end = go start (cycle directions) 0 directions 
                         (if head dir == 'L' then left else right)
                         (tail dir)
                         (acc + 1)
-                        originalDir
-                        (S.insert (node, take (length originalDir) dir) trail)
+                        dirLength
+                        (S.insert (node, take dirLength dir) trail)
         )
 
 measurePar :: M.Map String (String, String) -> String -> [String] -> Int
 measurePar dict directions starts = go starts (cycle directions) 0
   where
     go nodes dir acc =
-      if all ((== 'Z') . head . reverse) nodes
+      if all ((== 'Z') . last) nodes
         then acc
         else
           acc `seq`
-            ( let selector = if (head dir) == 'L' then fst else snd
+            ( let selector = if head dir == 'L' then fst else snd
                   nexts =
                     map (\n -> selector . fromJust $ M.lookup n dict) nodes
                in go nexts (tail dir) (1 + acc)
             )
+
 getAllPaths dict dir starts ends = do
   s <- name <$> starts
   e <- name <$> ends
   return (s, e, tryMeasure dict dir s e)
-
