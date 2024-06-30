@@ -31,9 +31,9 @@ d08p2 filename = do
   input <- datafile filename
   let Right (directions, nodes) = runParser parseInput () "input" input
   let dict = M.fromList . map (\n -> (name n, (left n, right n))) $ nodes
-  let starts = filter ((== 'A') . last . name) $ nodes
+  let starts = filter ((== 'A') . last . name) nodes
   -- return . show $ measurePar dict directions ( name <$> starts)
-  let ends = filter ((== 'Z') . last . name) $ nodes
+  let ends = filter ((== 'Z') . last . name) nodes
   let paths = getAllPaths dict directions starts ends
   return . show . foldl' lcm 1 . mapMaybe (\(_, _, n) -> n) $ paths
 
@@ -90,7 +90,7 @@ tryMeasure dict directions start end = go start (cycle directions) 0 (length dir
     go node dir acc dirLength trail =
       acc `seq`
         ( if node == end
-            then (Just acc)
+            then Just acc
             else
               if S.member (node, take dirLength dir) trail
                 then Nothing
@@ -110,11 +110,11 @@ measurePar :: M.Map String (String, String) -> String -> [String] -> Int
 measurePar dict directions starts = go starts (cycle directions) 0
   where
     go nodes dir acc =
-      if all ((== 'Z') . head . reverse) nodes
+      if all ((== 'Z') . last) nodes
         then acc
         else
           acc `seq`
-            ( let selector = if (head dir) == 'L' then fst else snd
+            ( let selector = if head dir == 'L' then fst else snd
                   nexts =
                     map (\n -> selector . fromJust $ M.lookup n dict) nodes
                in go nexts (tail dir) (1 + acc)
