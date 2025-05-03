@@ -4,6 +4,7 @@ module Day12 (day12) where
 
 import Control.Monad
 import Data.List
+import qualified Data.Text as T
 import Game.Advent
 import Paths_Advent2023Hs (getDataFileName)
 
@@ -47,7 +48,7 @@ d12p1 filename = do
   input <- datafile filename
   return . show . sum . map (solutions . parseReading) . lines $ input
 
-data Reading = Reading {chars :: !String, groups :: ![Int]}
+data Reading = Reading {chars :: !T.Text, groups :: ![Int]}
   deriving (Show)
 
 parseReading :: String -> Reading
@@ -55,14 +56,14 @@ parseReading txt =
   let charPart = takeWhile (/= ' ') txt
       numPart = tail $ dropWhile (/= ' ') txt
    in Reading
-        { chars = charPart,
+        { chars = T.pack charPart,
           groups = map read $ commaSplit numPart
         }
 
 unfoldReading :: Reading -> Reading
 unfoldReading (Reading chars groups) =
   Reading
-    (concat (replicate 5 chars))
+    (T.replicate 5 chars)
     (concat (replicate 5 groups))
 
 delimit :: Char -> String -> [String]
@@ -79,33 +80,45 @@ solutions :: Reading -> Int -- ?
 solutions (Reading {chars, groups}) =
   solHelper chars groups
 
-
-solHelper :: String -> [Int] -> Int
+solHelper :: T.Text -> [Int] -> Int
 solHelper chars groups
-  | '?' `notElem` chars = if groupsForChars chars == groups then 1 else 0
+  | not (wildcard `T.isInfixOf` chars) = if groupsForChars chars == groups then 1 else 0
   | greedyGroups chars `isPrefixOf` groups = solHelper (subOne '#' chars) groups + solHelper (subOne '.' chars) groups
   | otherwise = 0
 
-subOne :: Char -> String -> String
-subOne c s = takeWhile (/= '?') s  ++ [c] ++ drop 1 (dropWhile (/= '?') s)
+wildcard = T.singleton '?'
 
-greedyGroups :: String -> [Int]
-greedyGroups s =  case groupsForChars . takeWhile (/= '?') $ s of
-                    [] -> []
-                    gs -> init gs
+subOne :: Char -> T.Text -> T.Text
+subOne c s =
+  let (first, rest) = T.breakOn wildcard s
+   in T.concat [first, T.singleton c, T.drop 1 rest]
 
-groupsForChars = map length . filter ((== '#') . head) . group
+greedyGroups :: T.Text -> [Int]
+greedyGroups s = case groupsForChars . T.takeWhile (/= '?') $ s of
+  [] -> []
+  gs -> init gs
 
-groupMatch :: [Int] -> String -> Bool
-groupMatch groups chars =
-  groups == groupsForChars chars
+-- Helper data structure used in groupsForChars
+
+data GroupState = GS {gsGroups :: ![Int], gsTotal :: !Int, gsInGroup :: !Bool}
+
+gsStep (GS gsGroups gsTotal gsInGroup) c =
+  case (c, gsInGroup) of
+    ('.', True) -> GS (gsTotal : gsGroups) 0 False
+    ('.', False) -> GS gsGroups gsTotal False
+    ('#', True) -> GS gsGroups (gsTotal + 1) True
+    ('#', False) -> GS gsGroups 1 True
+
+gsFinal (GS g t p) = reverse $ if p then t : g else g
+
+groupsForChars c = gsFinal $ T.foldl' gsStep (GS [] 0 False) c
 
 -- | Part 2.  Short description of the problem.
 -- >>> d12p2 "day12-ex.txt"
 -- Same as part 1, but everything is five times as long.
 d12p2 filename = do
   input <- datafile filename
-  return . show . sum . map (solutions . unfoldReading . parseReading) . lines $ input
+  return . show . foldl' (+) 0 . map (solutions . unfoldReading . parseReading) . lines $ input
 
 day12 :: Day
 day12 =
