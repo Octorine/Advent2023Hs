@@ -9,7 +9,8 @@ import Data.Maybe (fromJust)
 import Game.Advent
 import Paths_Advent2023Hs (getDataFileName)
 
-datafile filename = (getDataFileName $ filename) >>= readFile
+
+datafile filename = getDataFileName filename >>= readFile
 
 -- | Part 1.  Input consists of a list of numbers with a | in the middle.  For each line, find all the numbers on the left that also appear on the right and award 2^(number minus one) points for that line.  Add up the lines.
 -- >>> d04p1 "day04-ex.txt"
@@ -23,10 +24,7 @@ d04p1 filename = do
 -- "30"
 d04p2 filename = do
   input <- datafile filename
-  let records =
-        map readRecord
-          . lines
-          $ input
+  let records = map readRecord . lines $ input
       scores =
         M.fromList
           . map (\r -> (name r, intersections r))
@@ -37,8 +35,8 @@ d04p2 filename = do
         let first = minimum rs
             mult = length . filter (== first) $ rs
             score = fromJust (M.lookup first scores)
-            newRs =
-              ( filter (/= first) rs
+            newRs =  (
+              filter  (/= first) rs
                   ++ concat
                     ( replicate
                         mult
@@ -48,8 +46,7 @@ d04p2 filename = do
                                  (first + score)
                              )
                         ]
-                    )
-              )
+                    ))
          in total `seq`
               if first >= last || null newRs
                 then total + mult
@@ -78,7 +75,7 @@ data Record = Record
 readRecord :: String -> Record
 readRecord l =
   let split = words l
-      name = read . filter isDigit . head $ drop 1 split
+      name = (read . filter isDigit) (split !! 1)
       numbers = drop 2 split
       left = map read . takeWhile (/= "|") $ numbers
       right = map read . tail . dropWhile (/= "|") $ numbers
@@ -86,13 +83,10 @@ readRecord l =
 
 points :: Record -> Int
 points (Record {name, left, right}) =
-  let intersection = filter (member right) left
+  let intersection = filter (`elem` right) left
    in if null intersection
         then 0
         else 2 ^ (length intersection - 1)
 
 intersections :: Record -> Int
-intersections (Record {left, right}) = length $ filter (member right) left
-
-member :: (Eq a) => [a] -> a -> Bool
-member ls thing = any (== thing) ls
+intersections (Record {left, right}) = length $ filter (`elem` right) left
